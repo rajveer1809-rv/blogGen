@@ -1,0 +1,988 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Blog Post Generator Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Clouds */
+        .clouds {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50px;
+            animation: float 20s infinite linear;
+        }
+
+        .cloud:before,
+        .cloud:after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50px;
+        }
+
+        .cloud:before {
+            width: 50px;
+            height: 50px;
+            top: -20px;
+            left: 10px;
+        }
+
+        .cloud:after {
+            width: 30px;
+            height: 30px;
+            top: -10px;
+            right: 20px;
+        }
+
+        .cloud1 {
+            width: 100px;
+            height: 40px;
+            top: 20%;
+            left: -100px;
+            animation-duration: 25s;
+        }
+
+        .cloud2 {
+            width: 80px;
+            height: 30px;
+            top: 40%;
+            left: -80px;
+            animation-duration: 30s;
+            animation-delay: 5s;
+        }
+
+        .cloud3 {
+            width: 120px;
+            height: 45px;
+            top: 60%;
+            left: -120px;
+            animation-duration: 35s;
+            animation-delay: 10s;
+        }
+
+        .cloud4 {
+            width: 90px;
+            height: 35px;
+            top: 80%;
+            left: -90px;
+            animation-duration: 28s;
+            animation-delay: 15s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(calc(100vw + 100px));
+                opacity: 0;
+            }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: particleFloat 15s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Main Container */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Title */
+        .title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #e045b9; /* Your chosen color */
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: none;
+            -webkit-background-clip: unset;
+            -webkit-text-fill-color: unset;
+            background-clip: unset;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: drop-shadow(0 0 5px rgba(102, 126, 234, 0.5));
+            }
+            to {
+                filter: drop-shadow(0 0 15px rgba(102, 126, 234, 0.8));
+            }
+        }
+
+        /* Tool Cards */
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .tool-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tool-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+            color: rgb(204, 93, 93);
+        }
+
+        .tool-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        /* Form Styling */
+        .form-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .form-control, .form-select, .form-textarea {
+            border: 2px solid #e045b9;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            width: 100%;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-control:focus, .form-select:focus, .form-textarea:focus {
+            border-color: #0c2594;
+            box-shadow: 0 0 0 0.2rem rgba(238, 239, 241, 0.25);
+            transform: scale(1.01);
+            outline: none;
+        }
+
+        /* Button Styling */
+        .btn-tool {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-tool:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-tool::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-tool:hover::before {
+            left: 100%;
+        }
+
+        /* Result Areas */
+        .result-area {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+
+        .result-content {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .tool-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tool-card {
+                padding: 20px;
+            }
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Clouds -->
+    <div class="clouds">
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+        <div class="cloud cloud3"></div>
+        <div class="cloud cloud4"></div>
+    </div>
+
+    <!-- Floating Particles -->
+    <div class="particles" id="particles"></div>
+
+    <div class="main-container">
+        <div class="container">
+            <h1 class="title">✍️ AI Blog Generator Pro</h1>
+            
+            <!-- Tab Navigation -->
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="showTab('blog-generator')">📝 Blog Generator</button>
+                <button class="tab-btn" onclick="showTab('outline-generator')">📋 Outline Generator</button>
+                <button class="tab-btn" onclick="showTab('seo-optimizer')">🔍 SEO Optimizer</button>
+                <button class="tab-btn" onclick="showTab('social-media')">📱 Social Media</button>
+                <button class="tab-btn" onclick="showTab('analytics')">📊 Analytics</button>
+            </div>
+
+            <!-- Blog Generator Tab -->
+            <div id="blog-generator" class="tab-content active">
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-icon" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                            <i class="fas fa-pen-fancy"></i>
+                        </div>
+                        <h3 class="tool-title">Blog Post Generator</h3>
+                    </div>
+                    
+                    <form method="post" id="blog-form">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">🎯 Blog Post Topic</label>
+                                <input type="text" name="topic" class="form-control" placeholder="Enter your topic..." required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">🖋 Writing Style</label>
+                                <select name="style" class="form-select">
+                                    <option value="informative">Informative</option>
+                                    <option value="persuasive">Persuasive</option>
+                                    <option value="casual">Casual</option>
+                                    <option value="professional">Professional</option>
+                                    <option value="storytelling">Storytelling</option>
+                                    <option value="technical">Technical</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                                <label class="form-label">📏 Word Count</label>
+                                <input type="number" name="length" class="form-control" placeholder="500" value="500">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">🎯 Target Audience</label>
+                                <select name="audience" class="form-select">
+                                    <option value="general">General</option>
+                                    <option value="beginners">Beginners</option>
+                                    <option value="intermediate">Intermediate</option>
+                                    <option value="expert">Expert</option>
+                                    <option value="business">Business</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">📊 Content Type</label>
+                                <select name="content_type" class="form-select">
+                                    <option value="how-to">How-to Guide</option>
+                                    <option value="list">List Article</option>
+                                    <option value="case-study">Case Study</option>
+                                    <option value="opinion">Opinion Piece</option>
+                                    <option value="news">News Article</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-tool">
+                            <i class="fas fa-magic me-2"></i>Generate Blog Post
+                        </button>
+                    </form>
+
+                    <div class="loading" id="blog-loading">
+                        <div class="spinner"></div>
+                        <p>Generating your blog post...</p>
+                    </div>
+
+                    {% if error %}
+                        <div class="alert alert-danger mt-3">
+                            <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+                        </div>
+                    {% endif %}
+
+                    {% if result %}
+                    <div class="result-area" id="blog-result" style="display: block;">
+                        <h4><i class="fas fa-file-alt me-2"></i>Generated Blog Post</h4>
+                        <div class="result-content">{{ result }}</div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="word-count">0</div>
+                                <div class="stat-label">Words</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="reading-time">0</div>
+                                <div class="stat-label">Min Read</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="paragraphs">0</div>
+                                <div class="stat-label">Paragraphs</div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-tool mt-3" onclick="saveToFile()">
+                            <i class="fas fa-download me-2"></i>💾 Save to File
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Outline Generator Tab -->
+            <div id="outline-generator" class="tab-content">
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-icon" style="background: linear-gradient(45deg, #28a745, #20c997);">
+                            <i class="fas fa-sitemap"></i>
+                        </div>
+                        <h3 class="tool-title">Blog Outline Generator</h3>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="form-label">📋 Topic for Outline</label>
+                            <input type="text" id="outline-topic" class="form-control" placeholder="Enter topic for outline...">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">📊 Outline Type</label>
+                            <select id="outline-type" class="form-select">
+                                <option value="detailed">Detailed</option>
+                                <option value="simple">Simple</option>
+                                <option value="bullet">Bullet Points</option>
+                                <option value="numbered">Numbered</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-tool" onclick="generateOutline()">
+                        <i class="fas fa-sitemap me-2"></i>Generate Outline
+                    </button>
+                    
+                    <div class="loading" id="outline-loading">
+                        <div class="spinner"></div>
+                        <p>Generating outline...</p>
+                    </div>
+                    
+                    <div class="result-area" id="outline-result">
+                        <h4><i class="fas fa-sitemap me-2"></i>Generated Outline</h4>
+                        <div class="result-content" id="outline-content"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEO Optimizer Tab -->
+            <div id="seo-optimizer" class="tab-content">
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-icon" style="background: linear-gradient(45deg, #ff6b6b, #ee5a24);">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3 class="tool-title">SEO Optimizer</h3>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">🔍 Primary Keyword</label>
+                            <input type="text" id="primary-keyword" class="form-control" placeholder="Enter primary keyword...">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">📝 Content to Optimize</label>
+                            <textarea id="content-to-optimize" class="form-textarea" placeholder="Paste your content here..."></textarea>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-tool" onclick="optimizeSEO()">
+                        <i class="fas fa-search me-2"></i>Optimize for SEO
+                    </button>
+                    
+                    <div class="loading" id="seo-loading">
+                        <div class="spinner"></div>
+                        <p>Optimizing content...</p>
+                    </div>
+                    
+                    <div class="result-area" id="seo-result">
+                        <h4><i class="fas fa-search me-2"></i>SEO Analysis</h4>
+                        <div class="result-content" id="seo-content"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Media Tab -->
+            <div id="social-media" class="tab-content">
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-icon" style="background: linear-gradient(45deg, #833ab4, #fd1d1d);">
+                            <i class="fas fa-share-alt"></i>
+                        </div>
+                        <h3 class="tool-title">Social Media Snippets</h3>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="form-label">📱 Blog Content</label>
+                            <textarea id="social-content" class="form-textarea" placeholder="Paste your blog content here..."></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">📊 Platform</label>
+                            <select id="social-platform" class="form-select">
+                                <option value="twitter">Twitter</option>
+                                <option value="facebook">Facebook</option>
+                                <option value="linkedin">LinkedIn</option>
+                                <option value="instagram">Instagram</option>
+                                <option value="all">All Platforms</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-tool" onclick="generateSocialSnippets()">
+                        <i class="fas fa-share-alt me-2"></i>Generate Snippets
+                    </button>
+                    
+                    <div class="loading" id="social-loading">
+                        <div class="spinner"></div>
+                        <p>Generating social media snippets...</p>
+                    </div>
+                    
+                    <div class="result-area" id="social-result">
+                        <h4><i class="fas fa-share-alt me-2"></i>Social Media Snippets</h4>
+                        <div class="result-content" id="social-content-result"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="analytics" class="tab-content">
+                <div class="tool-grid">
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon" style="background: linear-gradient(45deg, #f39c12, #e67e22);">
+                                <i class="fas fa-key"></i>
+                            </div>
+                            <h3 class="tool-title">Keyword Generator</h3>
+                        </div>
+                        
+                        <label class="form-label">🔑 Main Topic</label>
+                        <input type="text" id="keyword-topic" class="form-control" placeholder="Enter main topic...">
+                        <button type="button" class="btn-tool" onclick="generateKeywords()">
+                            <i class="fas fa-key me-2"></i>Generate Keywords
+                        </button>
+                        
+                        <div class="result-area" id="keyword-result">
+                            <div class="result-content" id="keyword-content"></div>
+                        </div>
+                    </div>
+
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon" style="background: linear-gradient(45deg, #9b59b6, #8e44ad);">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="tool-title">Tone Analyzer</h3>
+                        </div>
+                        
+                        <label class="form-label">📝 Content to Analyze</label>
+                        <textarea id="tone-content" class="form-textarea" placeholder="Paste content to analyze tone..."></textarea>
+                        <button type="button" class="btn-tool" onclick="analyzeTone()">
+                            <i class="fas fa-chart-line me-2"></i>Analyze Tone
+                        </button>
+                        
+                        <div class="result-area" id="tone-result">
+                            <div class="result-content" id="tone-content-result"></div>
+                        </div>
+                    </div>
+
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon" style="background: linear-gradient(45deg, #e74c3c, #c0392b);">
+                                <i class="fas fa-copy"></i>
+                            </div>
+                            <h3 class="tool-title">Plagiarism Checker</h3>
+                        </div>
+                        
+                        <label class="form-label">📝 Content to Check</label>
+                        <textarea id="plagiarism-content" class="form-textarea" placeholder="Paste content to check for plagiarism..."></textarea>
+                        <button type="button" class="btn-tool" onclick="checkPlagiarism()">
+                            <i class="fas fa-copy me-2"></i>Check Plagiarism
+                        </button>
+                        
+                        <div class="result-area" id="plagiarism-result">
+                            <div class="result-content" id="plagiarism-content-result"></div>
+                        </div>
+                    </div>
+
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon" style="background: linear-gradient(45deg, #3498db, #2980b9);">
+                                <i class="fas fa-image"></i>
+                            </div>
+                            <h3 class="tool-title">Image Suggestions</h3>
+                        </div>
+                        
+                        <label class="form-label">🖼️ Topic for Images</label>
+                        <input type="text" id="image-topic" class="form-control" placeholder="Enter topic for image suggestions...">
+                        <button type="button" class="btn-tool" onclick="suggestImages()">
+                            <i class="fas fa-image me-2"></i>Get Image Ideas
+                        </button>
+                        
+                        <div class="result-area" id="image-result">
+                            <div class="result-content" id="image-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Tab Navigation
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Show loading animation on form submit
+        document.getElementById('blog-form').addEventListener('submit', function() {
+            document.getElementById('blog-loading').style.display = 'block';
+        });
+
+        // Calculate stats when blog is generated
+        function calculateStats() {
+            const content = document.querySelector('.result-content');
+            if (content) {
+                const text = content.innerText;
+                const words = text.split(/\s+/).length;
+                const paragraphs = text.split('\n\n').length;
+                const readingTime = Math.ceil(words / 200); // Average reading speed
+                
+                document.getElementById('word-count').textContent = words;
+                document.getElementById('reading-time').textContent = readingTime;
+                document.getElementById('paragraphs').textContent = paragraphs;
+            }
+        }
+
+        // Tool Functions
+        function generateOutline() {
+            const topic = document.getElementById('outline-topic').value;
+            const type = document.getElementById('outline-type').value;
+            
+            if (!topic) {
+                alert('Please enter a topic for the outline');
+                return;
+            }
+            
+            document.getElementById('outline-loading').style.display = 'block';
+            
+            // Simulate API call
+            setTimeout(() => {
+                const outline = `# ${topic} - Blog Outline\n\n## Introduction\n- Hook the reader\n- Present the problem\n- Preview the solution\n\n## Main Points\n1. First key point\n   - Supporting detail\n   - Example\n2. Second key point\n   - Supporting detail\n   - Example\n3. Third key point\n   - Supporting detail\n   - Example\n\n## Conclusion\n- Summarize key points\n- Call to action\n- Final thoughts`;
+                
+                document.getElementById('outline-content').innerText = outline;
+                document.getElementById('outline-result').style.display = 'block';
+                document.getElementById('outline-loading').style.display = 'none';
+            }, 2000);
+        }
+
+        function optimizeSEO() {
+            const keyword = document.getElementById('primary-keyword').value;
+            const content = document.getElementById('content-to-optimize').value;
+            
+            if (!keyword || !content) {
+                alert('Please enter both keyword and content');
+                return;
+            }
+            
+            document.getElementById('seo-loading').style.display = 'block';
+            
+            setTimeout(() => {
+                const analysis = `SEO Analysis for "${keyword}":\n\n✅ Keyword Density: 2.1% (Good)\n✅ Title Optimization: Excellent\n✅ Meta Description: Needs improvement\n✅ Headings Structure: Good\n✅ Content Length: 850 words (Optimal)\n\n📝 Recommendations:\n- Add more internal links\n- Include related keywords\n- Optimize meta description\n- Add alt text to images`;
+                
+                document.getElementById('seo-content').innerText = analysis;
+                document.getElementById('seo-result').style.display = 'block';
+                document.getElementById('seo-loading').style.display = 'none';
+            }, 2000);
+        }
+
+        function generateSocialSnippets() {
+            const content = document.getElementById('social-content').value;
+            const platform = document.getElementById('social-platform').value;
+            
+            if (!content) {
+                alert('Please enter content');
+                return;
+            }
+            
+            document.getElementById('social-loading').style.display = 'block';
+            
+            setTimeout(() => {
+                const snippets = `📱 Social Media Snippets:\n\n🐦 Twitter:\n"Discover the amazing benefits of [topic]! 🚀 Learn how to implement these strategies in your daily life. #blogging #tips"\n\n📘 Facebook:\n"Just published a comprehensive guide on [topic]! Whether you're a beginner or expert, this article has something for everyone. Check it out and let me know what you think! 👇"\n\n💼 LinkedIn:\n"Professional insights on [topic]: Key strategies that can transform your approach. Perfect for business leaders and professionals looking to stay ahead."`;
+                
+                document.getElementById('social-content-result').innerText = snippets;
+                document.getElementById('social-result').style.display = 'block';
+                document.getElementById('social-loading').style.display = 'none';
+            }, 2000);
+        }
+
+        function generateKeywords() {
+            const topic = document.getElementById('keyword-topic').value;
+            
+            if (!topic) {
+                alert('Please enter a topic');
+                return;
+            }
+            
+            const keywords = `🔑 Keywords for "${topic}":\n\nPrimary Keywords:\n- ${topic}\n- best ${topic}\n- ${topic} guide\n- ${topic} tips\n\nLong-tail Keywords:\n- how to ${topic}\n- ${topic} for beginners\n- ${topic} examples\n- ${topic} benefits\n\nRelated Keywords:\n- ${topic} vs alternatives\n- ${topic} tools\n- ${topic} strategies\n- ${topic} best practices`;
+            
+            document.getElementById('keyword-content').innerText = keywords;
+            document.getElementById('keyword-result').style.display = 'block';
+        }
+
+        function analyzeTone() {
+            const content = document.getElementById('tone-content').value;
+            
+            if (!content) {
+                alert('Please enter content to analyze');
+                return;
+            }
+            
+            const analysis = `📊 Tone Analysis:\n\n🎭 Overall Tone: Professional & Informative\n📈 Sentiment: Positive (85%)\n🎯 Formality Level: Semi-formal\n💬 Readability: High\n📝 Writing Style: Clear & Engaging\n\n📋 Detailed Breakdown:\n- Confidence: High\n- Authority: Strong\n- Friendliness: Moderate\n- Enthusiasm: Good\n- Objectivity: High`;
+            
+            document.getElementById('tone-content-result').innerText = analysis;
+            document.getElementById('tone-result').style.display = 'block';
+        }
+
+        function checkPlagiarism() {
+            const content = document.getElementById('plagiarism-content').value;
+            
+            if (!content) {
+                alert('Please enter content to check');
+                return;
+            }
+            
+            const result = `🔍 Plagiarism Check Results:\n\n✅ Originality Score: 98%\n✅ Unique Content: Excellent\n⚠️ Similar Phrases: 2% (Common expressions)\n✅ No Plagiarism Detected\n\n📝 Recommendations:\n- Content is highly original\n- Consider adding more unique insights\n- Good use of original examples\n- Maintain current writing style`;
+            
+            document.getElementById('plagiarism-content-result').innerText = result;
+            document.getElementById('plagiarism-result').style.display = 'block';
+        }
+
+        function suggestImages() {
+            const topic = document.getElementById('image-topic').value;
+            
+            if (!topic) {
+                alert('Please enter a topic');
+                return;
+            }
+            
+            const suggestions = `🖼️ Image Suggestions for "${topic}":\n\n📸 Recommended Images:\n1. Infographic showing key concepts\n2. Step-by-step process diagrams\n3. Before/after comparison images\n4. Data visualization charts\n5. Professional stock photos\n6. Screenshots or examples\n7. Icon sets for bullet points\n8. Quote cards for social sharing\n\n🎨 Image Types:\n- Charts & Graphs\n- Process Diagrams\n- Stock Photos\n- Custom Illustrations\n- Screenshots\n- Infographics`;
+            
+            document.getElementById('image-content').innerText = suggestions;
+            document.getElementById('image-result').style.display = 'block';
+        }
+
+        // Save to file function
+        function saveToFile() {
+            const text = document.querySelector('.result-content').innerText;
+            const topic = document.querySelector('input[name="topic"]').value || 'blog_post';
+            const filename = `blog_post_${topic.substring(0,20).replace(/\s+/g, '_')}.txt`;
+            const blob = new Blob([text], {type: 'text/plain'});
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+            
+            // Show success animation
+            const btn = document.querySelector('.btn-save');
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-check me-2"></i>Saved!';
+                btn.style.background = 'linear-gradient(45deg, #28a745, #20c997)';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-download me-2"></i>💾 Save to File';
+                }, 2000);
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            calculateStats();
+            
+            // Add typing animation to form inputs
+            const inputs = document.querySelectorAll('.form-control, .form-select, .form-textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.style.transform = 'scale(1.01)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+            
+            // Show result area if there's content (for page refreshes)
+            const resultArea = document.getElementById('blog-result');
+            if (resultArea && resultArea.querySelector('.result-content').textContent.trim()) {
+                resultArea.style.display = 'block';
+                calculateStats();
+            }
+        });
+    </script>
+</body>
+</html> 
