@@ -19,4 +19,8 @@ def main():
 
 
 if __name__ == "__main__":
+     port = os.environ.get("PORT", "8000")
+    main_args = sys.argv
+    if len(main_args) == 1:
+        main_args += ["runserver", f"0.0.0.0:{port}"]
     main()
