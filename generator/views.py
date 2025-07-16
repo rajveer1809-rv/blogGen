@@ -9,7 +9,7 @@ GEMINI_API_KEYS = [
     os.getenv('GEMINI_API_KEY', "AIzaSyBtPaVl-1y_e2_sUsWzBMoP7AldUdSNlxU"),  # Primary key
     os.getenv('GEMINI_API_KEY_BACKUP_1', "AIzaSyCoFogEj8LWnNWwffhQvsw4JKfQzbTpvYs"),  # Backup key 1
     os.getenv('GEMINI_API_KEY_BACKUP_2', "AIzaSyChFyd44dI20oZPcP_o4ZNPeU1AxMl3jAs"),  # Backup key 2
-    os.getenv('GEMINI_API_KEY_BACKUP_3', ""),  # Backup key 3
+    os.getenv('GEMINI_API_KEY_BACKUP_3', "AIzaSyBO_EgfG5h0H8cr0npShoLfv_6n32aq4Rg"),  # Backup key 3
 ]
 
 # Filter out empty keys
